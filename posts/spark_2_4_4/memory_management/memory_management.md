@@ -69,16 +69,16 @@ MemoryManager确保如果当前executor上有N个在运行的任务, 任务可�
 **首先由UnifiedMemoryManager借用/讨回存储内存**
 1. 讨回被存储借用的内存，使存储区域缩回storage region size
 
-[驱逐借出区域中的Blocks](evict_blocks.png)
+![驱逐借出区域中的Blocks](evict_blocks.png)
 
 
 2. 如果存储区域有空闲的可以直接占用
 
-[借用存储区域](memory_pool.png)
+![借用存储区域](memory_pool.png)
 
 **如果没有获得足够的内存，TaskMemoryManager则会触发任务内其他consumer的spill.**
 
-[spill](consumer_spill.png)
+![spill](consumer_spill.png)
 
 任务1不会spill任务2的memory consumer，spill只会被同任务consumer触发。内存不够时，任务2只会被动等待任务1释放内存。比如作业刚启动时，executor1被分配了1个task1，那么此时这个task1可以扩大自己的内存，最大可以独占执行内存（1/N，N=1）。过了一会，来了第二个task，此时task2需要等待task1释放一部分内存，当task2可以至少获取到1/2N（此时N=2）的执行内存时就可以继续了。
 
